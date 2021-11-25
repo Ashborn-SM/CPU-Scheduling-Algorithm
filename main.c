@@ -5,8 +5,6 @@
  */
 
 #include <stdio.h>
-#include <string.h>
-
 
 /**
  * @struct PCB
@@ -17,7 +15,7 @@ typedef struct{
 	int priority;  // Priority of the process
 	int burst_t;   // CPU burst time of the process
 	int arrival_t; // Arrival time of the process
-	int state; 	   // State of the process before interrupt
+	int state;     // State of the process before interrupt
 }PCB;
 
 /**
@@ -44,20 +42,16 @@ process new_process(int burst_t, int arrival_t, int priority, char* ID){
 			ID, priority, burst_t, arrival_t, .state = 0,
 		}, 
 		.N_context_switch = 0,
-		.N_preemption = 0
+		.N_preemption = 0,
 	};
 
 	return p;
 }
 
 int main(){
-	process* pending = NULL; // All the interrupted/pending processes
+	process* pending = malloc(sizeof(int)*2); // All the interrupted/pending processes
 
 	// Process Creation
 	process p1 = new_process(5, 0, 2, "P1");
 	process p2 = new_process(3, 2, 1, "P2");
-
-	printf("%i %i %i %i %i %s", p1.N_context_switch, p1.N_preemption,
-	p1.info.burst_t, p1.info.arrival_t, p1.info.priority, p1.info.id);
-
 }
