@@ -26,7 +26,7 @@ typedef struct{
 	PCB info;             // Information of the process
 	int N_context_switch; // Number of context switch
 	int N_preemption;     // Number of pre-emption
-}process;
+}Process;
 
 
 /**
