@@ -20,6 +20,14 @@ void init_process_heap(Heap* process_heap){
 	process_heap->array_p = malloc(sizeof(void*)*process_heap->capacity+1);
 }
 
+int is_empty(Heap* process_heap){
+	return !process_heap->size;
+}
+
+void* peak_min(Heap* process_heap){
+	return process_heap->array_p[1];
+}
+
 void register_key_compare(Heap* process_heap, int (*compare)(void*, void*)){
 	process_heap->key_compare = compare;
 }
