@@ -7,7 +7,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct heap_t Heap;
+typedef struct heap_t{
+	void** array_p;
+	int size, capacity;
+	int (*key_compare)(void*, void*);
+}Heap;
+
 
 void init_process_heap(Heap* process_heap);
 void insert_process(void* process, Heap* process_heap);

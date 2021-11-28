@@ -2,12 +2,6 @@
 
 #include "heap.h"
 
-struct heap_t{
-	void** array_p; 
-	int size, capacity;	
-	int (*key_compare)(void*, void*);
-};
-
 void memswap(void** a, void** b){
 	void* temp = *a;
 	*a = *b;
@@ -52,6 +46,9 @@ void heapifyUP(Heap* process_heap, int size){
 }
 
 void insert_process(void* process, Heap* process_heap){
+	if(process == NULL){
+		return;
+	}
 	if(process_heap->size == process_heap->capacity){
 		allocate(process_heap);
 	}
@@ -83,6 +80,9 @@ void heapifyDOWN(Heap* process_heap, int index){
 }
 
 void* remove_process(Heap* process_heap){
+	if(is_empty(process_heap)){
+		return NULL;
+	}
 	void** p = malloc(sizeof(*p));
 	memcpy(p, process_heap->array_p[1], sizeof(void*));
 
