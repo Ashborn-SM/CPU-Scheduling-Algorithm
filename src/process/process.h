@@ -21,6 +21,8 @@ typedef struct{
 }Process;
 
 
-process NewProcess(int burst_t, int arrival_t, int priority, char* ID);
+Process NewProcess(int burst_t, int arrival_t, int priority, char* ID);
 void UpdateState(void* process);
 int CheckProcessTermination(void* process);
+int is_equal(void* process_a, void* process_b);
+void UpdateNContextSwitch(void* process);

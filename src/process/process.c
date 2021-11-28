@@ -1,4 +1,5 @@
 #include "process.h"
+#include "macro.h"
 
 /**
  * @brief create new process
@@ -7,7 +8,7 @@
  * @param priority priority of the process
  * @return new process
  */
-process NewProcess(int burst_t, int arrival_t, int priority, char* ID){
+Process NewProcess(int burst_t, int arrival_t, int priority, char* ID){
 	process p = {
 		.info = {
 			ID, priority, burst_t, arrival_t, .state = 0,
@@ -25,7 +26,7 @@ process NewProcess(int burst_t, int arrival_t, int priority, char* ID){
  * @return void
  */
 void UpdateState(void* process){
-	((Process*)process)->info.state++;
+	STATE((Process*)process)++;
 }
 
 /**
@@ -36,8 +37,34 @@ void UpdateState(void* process){
  */
 int CheckProcessTermination(void*process){
 	Process* p = process;
-	if(p->info.state == p->info.burst_t){
+	if(STATE(p) == BURST_TIME(p)){
 		return 0;
 	}
 	return -1;
+}
+
+/**
+ * @brief check if the two process are the same
+ * @param process_a first process
+ * @param process_b second process
+ * @return 0 if two process are the same
+ * @return -1 if two process are different
+ */
+int is_equal(void* process_a, void* process_b){
+	Process* a = process_a;
+	Process* b = process_b;
+	if(strcmp(ID(a), ID(b)) == 0){
+		return 0;
+	}
+	return -1;
+}
+
+/**
+ * @brief update the number of context swithces happend
+ * to the process
+ * @param process
+ * @retrun void
+ */
+void UpdateNContextSwitch(void* process){
+	process->N_context_switch++;
 }
