@@ -20,22 +20,21 @@ int compare_priority(void* process_a, void* process_b){
  * @return void
  */
 void PreEmptiveScheduling(Heap* ProcessHeap){
-	int clock = 0, flag = 1;
-	Heap* PriorityProcessArray = malloc(sizeof(*PriorityProcessArray));
+	int clock = 0;
+	Heap* PriorityProcessArray = malloc(sizeof(Heap));
 	// Heap* PendingProcessHeap = malloc(sizeof(*PendingProcessHeap));
+	void* running_process = NULL, * prev_process = NULL;
 
 	register_key_compare(PriorityProcessArray, compare_priority);
 	// register_key_compare(PendingProcessHeap, compare_priority);
 
-	while(is_empty(PriorityProcessArray) || flag){
-		flag = 0;
-		void* running_process = NULL;
-		void* prev_process = running_process;
+	while(is_empty(PriorityProcessArray) == -1 || is_empty(ProcessHeap) == -1){
+		prev_process = running_process;
 	
 		insert_process(remove_process(ProcessHeap), PriorityProcessArray);
 		running_process = peak_min(PriorityProcessArray);
 		
-		if(is_equal(running_process, prev_process) == -1){
+		if(prev_process != NULL && is_equal(running_process, prev_process) == -1){
 			UpdateNContextSwitch(prev_process);
 			// UpdateNPreemption(); // Need to implement
 		    // insert_process(prev_process, PendingProcessHeap);
@@ -45,6 +44,7 @@ void PreEmptiveScheduling(Heap* ProcessHeap){
 
 		if(CheckProcessTermination(running_process) == 0){
 			remove_process(PriorityProcessArray);
+			running_process = peak_min(PriorityProcessArray);
 		}
 
 		clock++;
