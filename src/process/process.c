@@ -1,5 +1,7 @@
 #include "process.h"
 #include "macro.h"
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * @brief create new process
@@ -8,14 +10,17 @@
  * @param priority priority of the process
  * @return new process
  */
-Process NewProcess(int burst_t, int arrival_t, int priority, char* ID){
-	process p = {
-		.info = {
-			ID, priority, burst_t, arrival_t, .state = 0,
-		}, 
-		.N_context_switch = 0,
-		.N_preemption = 0,
-	};
+Process* NewProcess(int burst_t, int arrival_t, int priority, char* ID){
+	Process* p = malloc(sizeof(Process));
+
+	p->info.id = ID;
+	p->info.priority = priority;
+	p->info.burst_t = burst_t;
+	p->info.arrival_t = arrival_t;
+	p->info.state = 0;
+
+	p->N_context_switch = 0;
+	p->N_preemption = 0;
 
 	return p;
 }
@@ -26,7 +31,7 @@ Process NewProcess(int burst_t, int arrival_t, int priority, char* ID){
  * @return void
  */
 void UpdateState(void* process){
-	STATE((Process*)process)++;
+	STATE(((Process*)process))++;
 }
 
 /**
@@ -66,5 +71,5 @@ int is_equal(void* process_a, void* process_b){
  * @retrun void
  */
 void UpdateNContextSwitch(void* process){
-	process->N_context_switch++;
+	((Process*)process)->N_context_switch++;
 }
