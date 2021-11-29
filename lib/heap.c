@@ -15,7 +15,10 @@ void init_process_heap(Heap* process_heap){
 }
 
 int is_empty(Heap* process_heap){
-	return !process_heap->size;
+	if(process_heap->size == 0){
+		return 0;
+	}
+	return -1;
 }
 
 void* peak_min(Heap* process_heap){
@@ -71,7 +74,7 @@ int child(Heap* process_heap, int index){
 
 void heapifyDOWN(Heap* process_heap, int index){
 	int child_index = child(process_heap, index);
-	if(index*2 < process_heap->size){
+	if(index*2 <= process_heap->size){
 		if(process_heap->key_compare(process_heap->array_p[index], process_heap->array_p[child_index]) == 0){
 			memswap(&(process_heap->array_p[child_index]), &(process_heap->array_p[index]));
 			heapifyDOWN(process_heap, child_index);
@@ -80,15 +83,12 @@ void heapifyDOWN(Heap* process_heap, int index){
 }
 
 void* remove_process(Heap* process_heap){
-	if(is_empty(process_heap)){
+	if(is_empty(process_heap) == 0){
 		return NULL;
 	}
-	void** p = malloc(sizeof(*p));
-	memcpy(p, process_heap->array_p[1], sizeof(void*));
-
 	memswap(&(process_heap->array_p[1]), &(process_heap->array_p[process_heap->size--]));
 	heapifyDOWN(process_heap, 1);
-	return p;
+	return process_heap->array_p[process_heap->size+1];
 }
 
 /*
