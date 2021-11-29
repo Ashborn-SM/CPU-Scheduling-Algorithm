@@ -1,21 +1,35 @@
 TARGET: exe
 
-CFLAGS=-c -Wall
-CURRENT_DIR=.
-PRE-EMPTIVE_PATH=Algorithm/Pre-emptive-Scheduling
-LIB_PATH=../
-INCLUDE_ALL_HEADER_PATH=-I$(CURRENT_DIR) -I$(LIB_PATH) -I$(PRE-EMPTIVE_PATH)
+CFLAGS=-c -Wall -g3
+
+#PATH
+PROCESS_PATH=./process
+ALGORITHM_PATH=./Algorithm
+LIB_PATH=../lib
+
+#INCLUDE_LIB
+INCLUDE_PRE-EMPTIVE=-I./ -I$(LIB_PATH) 
+INCLUDE_MAIN=-I$(ALGORITHM_PATH) $(INCLUDE_PRE-EMPTIVE)
+
+OBJ_EXE=main.o pre-emptive-scheduling.o lib.o process.o
 
 lib.o: $(LIB_PATH)/heap.c
-	$(CC) -I$(LIB_PATH) $(CFLAGS) $< -o $(LIB_PATH)/$@
+	$(CC) -I$(LIB_PATH) $(CFLAGS) $< -o $@
 
-pre-emptive-scheduling.o: $(PRE-EMPTIVE_PATH)/pre-emptive-scheduling.c
-	$(CC) $(INCLUDE_ALL_HEADER_PATH) $(CFLAGS) $< -o $(PRE-EMPTIVE_PATH)/$@
+process.o: $(PROCESS_PATH)/process.c
+	$(CC) -I./ $(CFLAGS) $< -o $@
 
-main.o: main.c
-	$(CC) $(INCLUDE_ALL_HEADER_PATH) $(CFLAGS) $< -o $@
+pre-emptive-scheduling.o: $(ALGORITHM_PATH)/Pre-emptive-Scheduling/pre-emptive-scheduling.c
+	$(CC) $(INCLUDE_PRE-EMPTIVE) $(CFLAGS) $< -o $@
+
+main.o: main.c 
+	$(CC) $(INCLUDE_MAIN) $(CFLAGS) $< -o $@
+	
+exe: $(OBJ_EXE)
+	$(CC) $^ -o $@
+
+debug: $(OBJ_EXE)
+	$(CC) $^ -o exe
 
 clean:
-	rm main.o
-	rm $(LIB_PATH)/heap.o
-	rm $(PRE-EMPTIVE_PATH)/pre-emptive-scheduling.o
+	rm *.o exe
