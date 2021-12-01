@@ -20,33 +20,36 @@ int compare_priority(void* process_a, void* process_b){
  * @return void
  */
 void PreEmptiveScheduling(Heap* ProcessHeap){
-	int clock = 0;
+	int clock = 0, CSWITCH_FLAG = 1;
 	Heap* PriorityProcessArray = malloc(sizeof(Heap));
-	// Heap* PendingProcessHeap = malloc(sizeof(*PendingProcessHeap));
+	Heap* PendingProcess = malloc(sizeof(Heap));
 	void* running_process = NULL, * prev_process = NULL;
 
 	register_key_compare(PriorityProcessArray, compare_priority);
-	// register_key_compare(PendingProcessHeap, compare_priority);
+	register_key_compare(PendingProcess, compare_priority);
 
 	while(is_empty(PriorityProcessArray) == -1 || is_empty(ProcessHeap) == -1){
 		prev_process = running_process;
 	
-		insert_process(remove_process(ProcessHeap), PriorityProcessArray);
-		running_process = peak_min(PriorityProcessArray);
-		
-		if(prev_process != NULL && is_equal(running_process, prev_process) == -1){
-			UpdateNContextSwitch(prev_process);
-			// UpdateNPreemption(); // Need to implement
-		    // insert_process(prev_process, PendingProcessHeap);
+		if(is_empty(ProcessHeap) == -1 && get_arrival_t(peak_min(ProcessHeap)) <= clock){
+			insert_process(remove_process(ProcessHeap), PriorityProcessArray);
 		}
-
+		running_process = peak_min(PriorityProcessArray);
+		if(prev_process != NULL && is_equal(running_process, prev_process) == -1 && CSWITCH_FLAG){
+			UpdateNContextSwitch(prev_process);
+			insert_process(prev_process, PendingProcess);
+		}
 		UpdateState(running_process);
 
+		CSWITCH_FLAG = 1;
 		if(CheckProcessTermination(running_process) == 0){
+			if(peak_min(PriorityProcessArray) == peak_min(PendingProcess)){
+				remove_process(PendingProcess);
+			}
 			remove_process(PriorityProcessArray);
-			running_process = peak_min(PriorityProcessArray);
+			UpdateNPreemption(PendingProcess);
+			CSWITCH_FLAG = 0;
 		}
-
 		clock++;
 	}
 }
