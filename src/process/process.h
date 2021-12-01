@@ -1,6 +1,7 @@
 #ifndef PROCESS
 #define PROCESS
 
+#include "heap.h"
 
 /**
  * @struct PCB
@@ -25,10 +26,13 @@ typedef struct{
 }Process;
 
 
-Process* NewProcess(int burst_t, int arrival_t, int priority, char* ID);
+Process* NewProcess(int priority, int arrival_t, int burst_t, char* ID);
 void UpdateState(void* process);
 int CheckProcessTermination(void* process);
 int is_equal(void* process_a, void* process_b);
 void UpdateNContextSwitch(void* process);
+void UpdateNPreemption(void* process);
+int get_arrival_t(void* process);
+char* get_id(void* process);
 
 #endif

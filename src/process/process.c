@@ -10,7 +10,7 @@
  * @param priority priority of the process
  * @return new process
  */
-Process* NewProcess(int burst_t, int arrival_t, int priority, char* ID){
+Process* NewProcess(int priority, int arrival_t, int burst_t, char* ID){
 	Process* p = malloc(sizeof(Process));
 
 	p->info.id = ID;
@@ -23,6 +23,23 @@ Process* NewProcess(int burst_t, int arrival_t, int priority, char* ID){
 	p->N_preemption = 0;
 
 	return p;
+}
+
+/**
+ * @brief return the id of the process
+ * @param process
+ * @return id
+ */
+char* get_id(void* process){
+	return ID(((Process*)process));
+}
+/**
+ * @brief return the arrival time of the process
+ * @param process
+ * @return arrival time
+ */
+int get_arrival_t(void* process){
+	return ARRIVAL_TIME(((Process*)process));
 }
 
 /**
@@ -42,7 +59,8 @@ void UpdateState(void* process){
  */
 int CheckProcessTermination(void*process){
 	Process* p = process;
-	if(STATE(p) == BURST_TIME(p)){
+	if(process == NULL){ return -1; }
+	else if(STATE(p) == BURST_TIME(p)){
 		return 0;
 	}
 	return -1;
@@ -72,4 +90,17 @@ int is_equal(void* process_a, void* process_b){
  */
 void UpdateNContextSwitch(void* process){
 	((Process*)process)->N_context_switch++;
+}
+
+/**
+ * @brief update the number of pre-emption happend
+ * to the process
+ * @param process_heap heap of pending process
+ * @retrun void
+ */
+void UpdateNPreemption(void* pending_heap){
+	Heap* p_heap = pending_heap;
+	for(int i=1; i<=p_heap->size; i++){
+		((Process*)p_heap->array_p[i])->N_preemption++;
+	}
 }
