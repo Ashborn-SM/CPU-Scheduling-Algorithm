@@ -11,7 +11,7 @@ void memswap(void** a, void** b){
 void init_process_heap(Heap* process_heap){
 	process_heap->size = 0;
 	process_heap->capacity = 2;
-	process_heap->array_p = malloc(sizeof(void*)*process_heap->capacity+1);
+	process_heap->array_p = malloc(sizeof(void*)*(process_heap->capacity+1));
 }
 
 int is_empty(Heap* process_heap){
@@ -22,6 +22,7 @@ int is_empty(Heap* process_heap){
 }
 
 void* peak_min(Heap* process_heap){
+	if(is_empty(process_heap) == 0){ return NULL; }
 	return process_heap->array_p[1];
 }
 
@@ -31,7 +32,7 @@ void register_key_compare(Heap* process_heap, int (*compare)(void*, void*)){
 
 void allocate(Heap* process_heap){
 	process_heap->capacity *= 2;
-	void** new_array = malloc(sizeof(void*)*process_heap->capacity+1);
+	void** new_array = malloc(sizeof(void*)*(process_heap->capacity+1));
 	for(int i=1; i<=process_heap->size; i++){
 		new_array[i] = process_heap->array_p[i];
 	}
