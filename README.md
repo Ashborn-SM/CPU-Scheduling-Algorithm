@@ -1,2 +1,2 @@
-# CPU-Scheduling-Alogirhtm
+# CPU-Scheduling-Algorithm
 CPU-Scheduling-Algorithm
