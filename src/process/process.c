@@ -1,7 +1,6 @@
-#include "process.h"
-#include "macro.h"
 #include <stdlib.h>
 #include <string.h>
+#include "process.h"
 
 /**
  * @brief create new process
@@ -11,7 +10,7 @@
  * @return new process
  */
 Process* NewProcess(int priority, int arrival_t, int burst_t, char* ID){
-	Process* p = malloc(sizeof(Process));
+	Process* p = malloc(sizeof(*p));
 
 	p->info.id = ID;
 	p->info.priority = priority;
@@ -30,16 +29,17 @@ Process* NewProcess(int priority, int arrival_t, int burst_t, char* ID){
  * @param process
  * @return id
  */
-char* get_id(void* process){
-	return ID(((Process*)process));
+char* get_id(Process* process){
+	if(process == NULL){ return NULL; }
+	return ID(process);
 }
 /**
  * @brief return the arrival time of the process
  * @param process
  * @return arrival time
  */
-int get_arrival_t(void* process){
-	return ARRIVAL_TIME(((Process*)process));
+int get_arrival_t(Process* process){
+	return ARRIVAL_TIME(process);
 }
 
 /**
@@ -47,8 +47,9 @@ int get_arrival_t(void* process){
  * @param process process to be updated
  * @return void
  */
-void UpdateState(void* process){
-	STATE(((Process*)process))++;
+void UpdateState(Process* process){
+	if(process == NULL){ return; }
+	STATE(process)++;
 }
 
 /**
@@ -57,7 +58,7 @@ void UpdateState(void* process){
  * @return 0 process should be terminated
  * @return -1 process should not be terminated yet
  */
-int CheckProcessTermination(void*process){
+int CheckProcessTermination(Process* process){
 	Process* p = process;
 	if(process == NULL){ return -1; }
 	else if(STATE(p) == BURST_TIME(p)){
@@ -73,10 +74,8 @@ int CheckProcessTermination(void*process){
  * @return 0 if two process are the same
  * @return -1 if two process are different
  */
-int is_equal(void* process_a, void* process_b){
-	Process* a = process_a;
-	Process* b = process_b;
-	if(strcmp(ID(a), ID(b)) == 0){
+int is_equal(Process* process_a, Process* process_b){
+	if(strcmp(ID(process_a), ID(process_b)) == 0){
 		return 0;
 	}
 	return -1;
@@ -88,8 +87,8 @@ int is_equal(void* process_a, void* process_b){
  * @param process
  * @retrun void
  */
-void UpdateNContextSwitch(void* process){
-	((Process*)process)->N_context_switch++;
+void UpdateNContextSwitch(Process* process){
+	process->N_context_switch++;
 }
 
 /**
@@ -98,9 +97,8 @@ void UpdateNContextSwitch(void* process){
  * @param process_heap heap of pending process
  * @retrun void
  */
-void UpdateNPreemption(void* pending_heap){
-	Heap* p_heap = pending_heap;
-	for(int i=1; i<=p_heap->size; i++){
-		((Process*)p_heap->array_p[i])->N_preemption++;
+void UpdateNPreemption(Heap* pending_heap){
+	for(int i=1; i<=pending_heap->size; i++){
+		((Process*)pending_heap->array_p[i])->N_preemption++;
 	}
 }

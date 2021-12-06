@@ -1,6 +1,7 @@
 #ifndef PROCESS
 #define PROCESS
 
+#include "macro.h"
 #include "heap.h"
 
 /**
@@ -27,12 +28,12 @@ typedef struct{
 
 
 Process* NewProcess(int priority, int arrival_t, int burst_t, char* ID);
-void UpdateState(void* process);
-int CheckProcessTermination(void* process);
-int is_equal(void* process_a, void* process_b);
-void UpdateNContextSwitch(void* process);
-void UpdateNPreemption(void* process);
-int get_arrival_t(void* process);
-char* get_id(void* process);
+void UpdateState(Process* process);
+int CheckProcessTermination(Process* process);
+int is_equal(Process* process_a, Process* process_b);
+void UpdateNContextSwitch(Process* process);
+void UpdateNPreemption(Heap* process);
+int get_arrival_t(Process* process);
+char* get_id(Process* process);
 
 #endif
