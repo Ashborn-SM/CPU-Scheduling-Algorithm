@@ -3,6 +3,7 @@
 
 #include "heap.h"
 #include "macro.h"
+#include "process/trace.h"
 #include "process/process.h"
 
 int compare_priority(void* process_a, void* process_b);

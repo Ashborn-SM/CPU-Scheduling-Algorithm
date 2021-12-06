@@ -1,11 +1,13 @@
 #include "pre-emptive-scheduling.h"
 
+extern Trace** trace_array;
+
 /**
  * @brief compare priority of the processes
  * @param process_a
  * @param process_b
- * @return 0 process_a >= process_b
- * @return -1 process_b > process_a
+ * @return 0 process_a > process_b
+ * @return -1 process_b >= process_a
  */
 int compare_priority(void* process_a, void* process_b){
 	int a_p = PRIORITY(((Process*)process_a)); 
@@ -16,25 +18,30 @@ int compare_priority(void* process_a, void* process_b){
 
 /**
  * @brief pre-emptive scheduling algorithm
- * @param process_pool all the availble process
+ * @param ProcessHeap all the availble process
  * @return void
  */
 void PreEmptiveScheduling(Heap* ProcessHeap){
 	int clock = 0, CSWITCH_FLAG = 1, PREEMPTION_FLAG = 1;
-	Heap* PriorityProcessArray = malloc(sizeof(Heap));
-	Heap* PendingProcess = malloc(sizeof(Heap));
+	Heap* PriorityProcessHeap = malloc(sizeof(*PriorityProcessHeap));
+	Heap* PendingProcess = malloc(sizeof(*PendingProcess));
 	void* running_process = NULL, * prev_running_process = NULL;
 
-	register_key_compare(PriorityProcessArray, compare_priority);
+	register_key_compare(PriorityProcessHeap, compare_priority);
 	register_key_compare(PendingProcess, compare_priority);
 
-	while(is_empty(PriorityProcessArray) == -1 || is_empty(ProcessHeap) == -1){
+	// TRACER
+	trace_array = malloc(ProcessHeap->size*2*sizeof(*trace_array));
+	int idx_trace = 0;
+
+	while(is_empty(PriorityProcessHeap) == -1 || is_empty(ProcessHeap) == -1){
 		prev_running_process = running_process;
 	
 		if(is_empty(ProcessHeap) == -1 && get_arrival_t(peak_min(ProcessHeap)) <= clock){
-			insert_process(remove_process(ProcessHeap), PriorityProcessArray);
+			void* arrived_process = remove_process(ProcessHeap);
+			insert_process(arrived_process, PriorityProcessHeap);
 		}
-		running_process = peak_min(PriorityProcessArray);
+		running_process = peak_min(PriorityProcessHeap);
 		if(prev_running_process != NULL && is_equal(running_process, prev_running_process) == -1 && CSWITCH_FLAG){
 			UpdateNContextSwitch(prev_running_process);
 			insert_process(prev_running_process, PendingProcess);
@@ -43,12 +50,26 @@ void PreEmptiveScheduling(Heap* ProcessHeap){
 		}
 		UpdateState(running_process);
 
+		// TRACER
+		if(prev_running_process == NULL || is_equal(running_process, prev_running_process) == -1){
+			
+			// Updating the end time of the previous process
+			if(prev_running_process != NULL){
+				UpdateTrace(get_id(prev_running_process), -1, clock, trace_array[idx_trace-1]);
+			}
+
+			// Updating the start time of the current process
+			trace_array[idx_trace] = malloc(sizeof(**trace_array));
+			UpdateTrace(get_id(running_process), clock, -1, trace_array[idx_trace]);
+			idx_trace++;
+		}
+
 		CSWITCH_FLAG = 1;
 		if(CheckProcessTermination(running_process) == 0){
-			if(peak_min(PriorityProcessArray) == peak_min(PendingProcess)){
+			if(peak_min(PriorityProcessHeap) == peak_min(PendingProcess)){
 				remove_process(PendingProcess);
 			}
-			remove_process(PriorityProcessArray);
+			remove_process(PriorityProcessHeap);
 			if(PREEMPTION_FLAG){
 				UpdateNPreemption(PendingProcess);
 			}
@@ -57,5 +78,9 @@ void PreEmptiveScheduling(Heap* ProcessHeap){
 		}
 		clock++;
 	}
+
+	UpdateTrace(get_id(running_process), -1, clock, trace_array[idx_trace-1]);
+	trace_array[idx_trace] = NULL;
+
 	printf("Clock: %i\n", clock);
 }
