@@ -17,37 +17,67 @@ int compare_priority(void* process_a, void* process_b){
 }
 
 /**
+ * @brief check if the given process exist in the given array
+ * @param process
+ * @param preempting_p_array
+ * @return 0 exists
+ * @return -1 do not exist
+ */
+int unique(Process* process, Process** preempting_p_array){
+	static size_t size = 0;
+	int idx = size;
+	while(idx++ != size){
+		if(process == preempting_p_array[idx]){ return -1;}
+	}
+	preempting_p_array[size++] = process;
+	return 0;
+}	
+
+/**
  * @brief pre-emptive scheduling algorithm
  * @param ProcessHeap all the availble process
  * @return void
  */
 void PreEmptiveScheduling(Heap* ProcessHeap){
-	int clock = 0, CSWITCH_FLAG = 1, PREEMPTION_FLAG = 1;
+	int CSWITCH_FLAG = 1;
+
+	int clock = 0;
+
+	Process* running_process = NULL, * prev_running_process = NULL;
+
+	Process* preemting_p_array[ProcessHeap->size];
+
 	Heap* PriorityProcessHeap = malloc(sizeof(*PriorityProcessHeap));
 	Heap* PendingProcess = malloc(sizeof(*PendingProcess));
-	void* running_process = NULL, * prev_running_process = NULL;
-
-	register_key_compare(PriorityProcessHeap, compare_priority);
-	register_key_compare(PendingProcess, compare_priority);
 
 	// TRACER
 	trace_array = malloc(ProcessHeap->size*2*sizeof(*trace_array));
 	int idx_trace = 0;
 
+	register_key_compare(PriorityProcessHeap, compare_priority);
+	register_key_compare(PendingProcess, compare_priority);
+
 	while(is_empty(PriorityProcessHeap) == -1 || is_empty(ProcessHeap) == -1){
 		prev_running_process = running_process;
 	
+		// PROCESS ARRIVAL
 		if(is_empty(ProcessHeap) == -1 && get_arrival_t(peak_min(ProcessHeap)) <= clock){
-			void* arrived_process = remove_process(ProcessHeap);
-			insert_process(arrived_process, PriorityProcessHeap);
+			insert_process(remove_process(ProcessHeap), PriorityProcessHeap);
 		}
+
 		running_process = peak_min(PriorityProcessHeap);
+
+		// CONTEXT SWITCH
 		if(prev_running_process != NULL && is_equal(running_process, prev_running_process) == -1 && CSWITCH_FLAG){
 			UpdateNContextSwitch(prev_running_process);
-			insert_process(prev_running_process, PendingProcess);
-			UpdateNPreemption(PendingProcess);
-			PREEMPTION_FLAG = 0;
+
+			// PRE-EMPTION
+			if(unique(running_process, preemting_p_array) == 0){
+				insert_process(prev_running_process, PendingProcess);
+				UpdateNPreemption(PendingProcess);
+			}
 		}
+
 		UpdateState(running_process);
 
 		// TRACER
@@ -65,15 +95,15 @@ void PreEmptiveScheduling(Heap* ProcessHeap){
 		}
 
 		CSWITCH_FLAG = 1;
+
+		// PROCESS TERMINATION
 		if(CheckProcessTermination(running_process) == 0){
+
 			if(peak_min(PriorityProcessHeap) == peak_min(PendingProcess)){
 				remove_process(PendingProcess);
 			}
+
 			remove_process(PriorityProcessHeap);
-			if(PREEMPTION_FLAG){
-				UpdateNPreemption(PendingProcess);
-			}
-			PREEMPTION_FLAG = 1;
 			CSWITCH_FLAG = 0;
 		}
 		clock++;
