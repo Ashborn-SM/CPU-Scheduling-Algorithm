@@ -27,7 +27,9 @@ int unique(Process* process, Process** preempting_p_array){
 	static size_t size = 0;
 	int idx = size;
 	while(idx++ != size){
-		if(process == preempting_p_array[idx]){ return -1;}
+		if(process == preempting_p_array[idx]){ 
+			return -1; 
+		}
 	}
 	preempting_p_array[size++] = process;
 	return 0;
@@ -49,6 +51,9 @@ void PreEmptiveScheduling(Heap* ProcessHeap){
 
 	Heap* PriorityProcessHeap = malloc(sizeof(*PriorityProcessHeap));
 	Heap* PendingProcess = malloc(sizeof(*PendingProcess));
+
+	init_process_heap(PriorityProcessHeap);
+	init_process_heap(PendingProcess);
 
 	// TRACER
 	trace_array = malloc(ProcessHeap->size*2*sizeof(*trace_array));
