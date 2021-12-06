@@ -94,16 +94,22 @@ void* remove_process(Heap* process_heap){
 
 /*
 
-DEBUGGING
+//DEBUGGING
+
+typedef struct val{
+	int id, value;
+}val;
 
 void print(Heap* process_heap){
-	for(int i=1; i<=process_heap->size; i++){
-		printf("%i ", *(int*)process_heap->array_p[i]);
+	while(is_empty(process_heap)==-1){
+		printf("%i ", ((val*)remove_process(process_heap))->id);
 	}
 }
 
 int compare(void* a, void* b){
-	return *(int*)a >= *(int*)b ? 0: -1;
+	val* x = a;
+	val* y = b;
+	return x->value >= y->value? 0: -1;
 }
 
 int main(){
@@ -112,21 +118,29 @@ int main(){
 	init_process_heap(process_heap);
 	register_key_compare(process_heap, compare);
 
-	int arr[] = {245, 85, 687, 12, 30, 3, 145 , 5};
+	val* a1 = malloc(sizeof(val));
+	val* a2 = malloc(sizeof(val));
+	val* a3 = malloc(sizeof(val));
+	val* a4 = malloc(sizeof(val));
 
-	for(int i=0; i<8; i++){
-		insert_process(arr+i, process_heap);
-	}
-	
-	printf("%i\n", *(int*)remove_process(process_heap));
-	printf("%i\n", *(int*)remove_process(process_heap));
-	printf("%i\n", *(int*)remove_process(process_heap));
-	printf("%i\n", *(int*)remove_process(process_heap));
-	printf("%i\n", *(int*)remove_process(process_heap));
-	printf("%i\n", *(int*)remove_process(process_heap));
-	printf("%i\n", *(int*)remove_process(process_heap));
-	printf("%i\n", *(int*)remove_process(process_heap));
+	a1->value = 1;
+	a1->id = 1;
+
+	a2->value = 2;
+	a2->id = 2;
+
+	a3->value = 2;
+	a3->id = 3;
+
+	a4->value = 3;
+	a4->id = 4;
+
+	insert_process(a1, process_heap);
+	insert_process(a2, process_heap);
+	insert_process(a3, process_heap);
+	insert_process(a4, process_heap);
 
 	print(process_heap);
+
 }
 */
