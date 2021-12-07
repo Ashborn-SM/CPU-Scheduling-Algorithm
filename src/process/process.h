@@ -32,7 +32,7 @@ void UpdateState(Process* process);
 int CheckProcessTermination(Process* process);
 int is_equal(Process* process_a, Process* process_b);
 void UpdateNContextSwitch(Process* process);
-void UpdateNPreemption(Heap* process);
+void UpdateNPreemption(Heap* process, int start);
 int get_arrival_t(Process* process);
 char* get_id(Process* process);
 
