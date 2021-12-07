@@ -75,6 +75,9 @@ int CheckProcessTermination(Process* process){
  * @return -1 if two process are different
  */
 int is_equal(Process* process_a, Process* process_b){
+	if(process_a == NULL || process_b == NULL){
+		return -1;
+	}
 	if(strcmp(ID(process_a), ID(process_b)) == 0){
 		return 0;
 	}
@@ -97,8 +100,8 @@ void UpdateNContextSwitch(Process* process){
  * @param process_heap heap of pending process
  * @retrun void
  */
-void UpdateNPreemption(Heap* pending_heap){
-	for(int i=1; i<=pending_heap->size; i++){
+void UpdateNPreemption(Heap* pending_heap, int start){
+	for(int i=start; i<=pending_heap->size; i++){
 		((Process*)pending_heap->array_p[i])->N_preemption++;
 	}
 }

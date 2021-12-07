@@ -60,7 +60,7 @@ int main(){
 		printf("\n");
 	}
 
-	render(trace_array);
+	render(trace_array, 7);
 	return 0;
 }
 
