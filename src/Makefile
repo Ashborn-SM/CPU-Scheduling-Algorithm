@@ -10,10 +10,10 @@ ALGORITHM_PATH=./Algorithm
 LIB_PATH=../lib
 
 #INCLUDE_LIB
-INCLUDE_PRE-EMPTIVE=-I./ -I$(LIB_PATH)
-INCLUDE_MAIN=-I$(ALGORITHM_PATH) $(INCLUDE_PRE-EMPTIVE)
+INCLUDE_ALGORITHM=-I./ -I$(LIB_PATH)
+INCLUDE_MAIN=-I$(ALGORITHM_PATH) -I$(LIB_PATH) -I./
 
-OBJ_EXE=main.o pre-emptive-scheduling.o lib.o process.o trace.o
+OBJ_EXE= lib.o process.o pre-emptive-scheduling.o non-pre-emptive-scheduling.o main.o trace.o
 
 #BUILD
 lib.o: $(LIB_PATH)/heap.c
@@ -26,7 +26,10 @@ trace.o: $(PROCESS_PATH)/trace.c
 	$(CC) -I./ $(CFLAGS) $< -o $@
 
 pre-emptive-scheduling.o: $(ALGORITHM_PATH)/Pre-emptive-Scheduling/pre-emptive-scheduling.c
-	$(CC) $(INCLUDE_PRE-EMPTIVE) $(CFLAGS) $< -o $@
+	$(CC) $(INCLUDE_ALGORITHM) $(CFLAGS) $< -o $@
+	
+non-pre-emptive-scheduling.o: $(ALGORITHM_PATH)/Non-Pre-emptive-Scheduling/non-pre-emptive-scheduling.c
+	$(CC) $(INCLUDE_ALGORITHM) $(CFLAGS) $< -o $@
 
 main.o: main.c 
 	$(CC) $(INCLUDE_MAIN) $(CFLAGS) $< -o $@
