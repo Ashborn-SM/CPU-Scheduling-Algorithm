@@ -18,19 +18,20 @@ void render(Trace** trace_array, int ttl_process){
     int idx = 0, start_t = 0, end_t = 0;
     char* id;
     float ttl_time = 0;
-    printf("Trace     \tWaiting time\n\n");
+
+    // Trace
     while(trace_array[idx] != NULL){
         id = trace_array[idx]->id;
         start_t= trace_array[idx]->start_t;
         end_t = trace_array[idx]->end_t;
 
         printf("|____|%i\n", start_t);
-        printf("|%s  |\t\t  %s -> %i\n", id, id, start_t);
+        printf("|%s  |\n", id);
         ttl_time += start_t;
         idx++;
     }
     printf("|____|%i\n", end_t);
 
-    printf("\nAverage Waiting Time: %f\n", ttl_time/ttl_process);
+    printf("\nAverage Waiting Time: %f\n\n", ttl_time/ttl_process);
 }
 

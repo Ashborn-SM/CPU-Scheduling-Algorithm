@@ -9,11 +9,12 @@
  * @brief process-control-block of the process
  */
 typedef struct{
-	char* id;      // Process ID
-	int priority;  // Priority of the process
-	int burst_t;   // CPU burst time of the process
-	int arrival_t; // Arrival time of the process
-	int state;     // State of the process before interrupt
+	char* id;            // Process ID
+	int priority;        // Priority of the process
+	int burst_t;         // CPU burst time of the process
+	int arrival_t;       // Arrival time of the process
+	int state;           // State of the process before interrupt
+	int completion_time; // Completion time of the process
 }PCB;
 
 /**

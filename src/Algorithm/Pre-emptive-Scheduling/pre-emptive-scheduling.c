@@ -9,7 +9,7 @@ extern Trace** trace_array;
  * @return 0 process_a > process_b
  * @return -1 process_b >= process_a
  */
-int compare_priority(void* process_a, void* process_b){
+static int compare_priority(void* process_a, void* process_b){
 	int a_p = PRIORITY(((Process*)process_a)); 
 	int b_p = PRIORITY(((Process*)process_b));	
 
@@ -63,9 +63,9 @@ void PreEmptiveScheduling(Heap* ProcessHeap){
 
 	while(is_empty(PriorityProcessHeap) == -1 || is_empty(ProcessHeap) == -1){
 		prev_running_process = running_process;
-	
+		
 		// PROCESS ARRIVAL
-		if(is_empty(ProcessHeap) == -1 && get_arrival_t(peak_min(ProcessHeap)) <= clock){
+		if(is_empty(ProcessHeap) == -1 && get_arrival_t(peak_min(ProcessHeap)) == clock){
 			insert_process(remove_process(ProcessHeap), PriorityProcessHeap);
 		}
 
@@ -113,6 +113,8 @@ void PreEmptiveScheduling(Heap* ProcessHeap){
 
 		CSWITCH_FLAG = 1;
 
+		clock++;
+
 		// PROCESS TERMINATION
 		if(CheckProcessTermination(running_process) == 0){
 
@@ -121,10 +123,12 @@ void PreEmptiveScheduling(Heap* ProcessHeap){
 				remove_process(PendingProcessHeap);
 			}
 
+			// UPDATE COMPLETION TIME
+			COMPLETION_TIME(running_process) = clock;
+
 			remove_process(PriorityProcessHeap);
 			CSWITCH_FLAG = 0;
 		}
-		clock++;
 	}
 
 	UpdateTrace(get_id(running_process), -1, clock, trace_array[idx_trace-1]);
