@@ -17,6 +17,7 @@ Process* NewProcess(int priority, int arrival_t, int burst_t, char* ID){
 	p->info.burst_t = burst_t;
 	p->info.arrival_t = arrival_t;
 	p->info.state = 0;
+	p->info.completion_time = 0;
 
 	p->N_context_switch = 0;
 	p->N_preemption = 0;
@@ -39,6 +40,7 @@ char* get_id(Process* process){
  * @return arrival time
  */
 int get_arrival_t(Process* process){
+	if(process == NULL){ return -1; }
 	return ARRIVAL_TIME(process);
 }
 
