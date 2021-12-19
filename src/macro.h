@@ -6,5 +6,6 @@
 #define PRIORITY(process) process->info.priority
 #define ID(process) process->info.id
 #define STATE(process) process->info.state
+#define COMPLETION_TIME(process) process->info.completion_time
 
 #endif
