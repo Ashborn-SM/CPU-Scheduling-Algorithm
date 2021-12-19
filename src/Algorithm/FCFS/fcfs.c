@@ -2,18 +2,18 @@
 
 extern Trace** trace_array;
 
-void FCFS(Heap* ProcessHeap){
+void FCFS(P_Array* Process_Array){
 	// waiting time for first process is 0
 	int clock = 0, idx_trace = 0;
 	Process* running_process = NULL;
 
-    trace_array = malloc(ProcessHeap->size*2*sizeof(*trace_array));
+    trace_array = malloc(Process_Array->size*2*sizeof(*trace_array));
 
 	// calculating waiting time
 	printf("ID\tCompletion time\n");
-	while(is_empty(ProcessHeap) == -1){
-		if(get_arrival_t(peak_min(ProcessHeap)) <= clock){
-			running_process = remove_process(ProcessHeap);
+	while(is_empty(Process_Array) == -1){
+		if(get_arrival_t(peak_min(Process_Array)) <= clock){
+			running_process = remove_process(Process_Array);
 		}
 		else{
 
