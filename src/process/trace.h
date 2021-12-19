@@ -13,6 +13,6 @@ typedef struct{
 void print_box(Trace* trace);
 void UpdateTrace(char* id, int start_t, int end_t, Trace* trace);
 void UpdateTraceCTime(int completion_time, Trace* trace);
-void render(Trace** trace_array, int ttl_process);
+void render(Trace** trace_array);
 
 #endif
