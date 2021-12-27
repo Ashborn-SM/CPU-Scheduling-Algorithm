@@ -7,5 +7,7 @@
 #define ID(process) process->info.id
 #define STATE(process) process->info.state
 #define COMPLETION_TIME(process) process->info.completion_time
+#define TURN_AROUND_TIME(process) process->info.turn_around_time
+#define WAIT_TIME(process) process->info.wait_time
 
 #endif

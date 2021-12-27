@@ -103,7 +103,7 @@ void UpdateNContextSwitch(Process* process){
  * @retrun void
  */
 void UpdateNPreemption(P_Array* pending_heap, int start){
-	for(int i=start; i<=pending_heap->size; i++){
+	for(int i=start; i<pending_heap->size; i++){
 		((Process*)pending_heap->array_p[i])->N_preemption++;
 	}
 }

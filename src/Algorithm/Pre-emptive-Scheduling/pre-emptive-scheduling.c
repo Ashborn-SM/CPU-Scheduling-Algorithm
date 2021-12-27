@@ -13,7 +13,7 @@ static int compare_priority(void* process_a, void* process_b){
 	int a_p = PRIORITY(((Process*)process_a)); 
 	int b_p = PRIORITY(((Process*)process_b));	
 
-	return a_p >= b_p? 0: -1;
+	return a_p < b_p? 0: -1;
 }
 
 /**
@@ -65,7 +65,7 @@ void PreEmptiveScheduling(P_Array* ProcessArray){
 		prev_running_process = running_process;
 		
 		// PROCESS ARRIVAL
-		if(is_empty(ProcessArray) == -1 && get_arrival_t(peak_min(ProcessArray)) == clock){
+		if(is_empty(ProcessArray) == -1 && get_arrival_t(peak_min(ProcessArray)) <= clock){
 			insert_process(remove_process(ProcessArray), PriorityProcessArray);
 		}
 
@@ -86,9 +86,9 @@ void PreEmptiveScheduling(P_Array* ProcessArray){
 
 			// PRE-EMPTING PROCESS
 			if(unique(running_process, PreemptingProcessArray) == 0){
-				int start = 1;
+				int start = PendingProcessArray->current_idx;
 				if(is_equal(peak_min(PriorityProcessArray), peak_min(PendingProcessArray)) == 0){
-					start = 2;
+					start += 1;
 				}
 				insert_process(running_process, PreemptingProcessArray);
 				UpdateNPreemption(PendingProcessArray, start);

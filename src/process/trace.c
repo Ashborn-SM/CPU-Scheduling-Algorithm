@@ -18,6 +18,7 @@ void render(Trace** trace_array){
     int idx = 0, start_t = 0, end_t = 0;
     char* id;
     // Trace
+    printf("\n");
     while(trace_array[idx] != NULL){
         id = trace_array[idx]->id;
         start_t= trace_array[idx]->start_t;
@@ -27,6 +28,6 @@ void render(Trace** trace_array){
         printf("|%s  |\n", id);
         idx++;
     }
-    printf("|_____|%i\n", end_t);
+    printf("|_____|%i\n\n", end_t);
 }
 

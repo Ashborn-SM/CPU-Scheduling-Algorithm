@@ -1,76 +1,57 @@
 #include "non-pre-emptive-scheduling.h"
 
+
 extern Trace** trace_array;
 
-/**
- * @brief compare priority of the processes
- * @param process_a
- * @param process_b
- * @return 0 process_a > process_b
- * @return -1 process_b >= process_a
- */
-static int compare_priority(void* process_a, void* process_b){
-	int a_p = PRIORITY(((Process*)process_a)); 
-	int b_p = PRIORITY(((Process*)process_b));	
+void NonPreEmptiveScheduling(P_Array* Process_Array, int (*compare)(void*, void*)){
+	// waiting time for first process is 0
+	int clock = 0, idx_trace = 0, avg_wait_time = 0, avg_turn_around_time = 0, size = Process_Array->size, idx = 0;
+	Process* running_process = NULL;
+	P_Array* Array = malloc(sizeof(*Array));
 
-	return a_p >= b_p? 0: -1;
-}
+	init_process_array(Array);
+	register_key_compare(Array, compare);
+	trace_array = malloc(Process_Array->size*2*sizeof(*trace_array));
 
-/**
- * @brief non-pre-emptive scheduling algorithm
- * @param ProcessHeap all the availble process
- * @return void
- */
-void NonPreEmptiveScheduling(Heap* ProcessHeap){
-	int clock = 0, TERMINATION_FLAG = 1;
+	while(is_empty(Process_Array) == -1 || is_empty(Array) == -1){
 
-	Process* running_process = NULL, * prev_running_process = NULL;
-
-	Heap* PriorityProcessHeap = malloc(sizeof(*PriorityProcessHeap));
-	init_process_heap(PriorityProcessHeap);
-	register_key_compare(PriorityProcessHeap, compare_priority);
-
-	// TRACER
-	trace_array = malloc(ProcessHeap->size*2*sizeof(*trace_array));
-	int idx_trace = 0;
-
-	while(is_empty(PriorityProcessHeap) == -1 || is_empty(ProcessHeap) == -1 || !TERMINATION_FLAG){
-		prev_running_process = running_process;
-	
-		// PROCESS ARRIVAL
-		if(is_empty(ProcessHeap) == -1 && get_arrival_t(peak_min(ProcessHeap)) <= clock){
-			insert_process(remove_process(ProcessHeap), PriorityProcessHeap);
-		}
-
-		if(TERMINATION_FLAG){
-			running_process = remove_process(PriorityProcessHeap);
-		}
-
-		UpdateState(running_process);
-
-		// TRACER
-		if(prev_running_process == NULL || is_equal(running_process, prev_running_process) == -1){
-			
-			// Updating the end time of the previous process
-			if(prev_running_process != NULL){
-				UpdateTrace(get_id(prev_running_process), -1, clock, trace_array[idx_trace-1]);
+		while(idx<=clock && is_empty(Process_Array) == -1){
+			if(get_arrival_t(peak_min(Process_Array)) <= clock){
+				void* prcoess =  remove_process(Process_Array);
+				insert_process(prcoess, Array);
 			}
+			idx++;
+		}
 
-			// Updating the start time of the current process
+		if(get_arrival_t(peak_min(Array)) <= clock && get_arrival_t(peak_min(Array)) != -1){
+			running_process = remove_process(Array);
+		}
+		else{
+            // trace
 			trace_array[idx_trace] = malloc(sizeof(**trace_array));
-			UpdateTrace(get_id(running_process), clock, -1, trace_array[idx_trace]);
-			idx_trace++;
-		}
+			UpdateTrace("n\\a", clock, -1, trace_array[idx_trace++]);
 
-		TERMINATION_FLAG = 0;
-
-		// PROCESS TERMINATION
-		if(CheckProcessTermination(running_process) == 0){
-			TERMINATION_FLAG = 1;
+			clock++;
+			continue;
 		}
-		clock++;
+		// trace
+		trace_array[idx_trace] = malloc(sizeof(**trace_array));
+		UpdateTrace(get_id(running_process), clock, -1, trace_array[idx_trace++]);
+
+		clock += BURST_TIME(running_process);
+
+		COMPLETION_TIME(running_process) = clock;
+		TURN_AROUND_TIME(running_process) = COMPLETION_TIME(running_process)- ARRIVAL_TIME(running_process);
+		WAIT_TIME(running_process) = TURN_AROUND_TIME(running_process)-BURST_TIME(running_process);
+		
+		avg_turn_around_time += TURN_AROUND_TIME(running_process);
+		avg_wait_time += WAIT_TIME(running_process);
+		
 	}
-
 	UpdateTrace(get_id(running_process), -1, clock, trace_array[idx_trace-1]);
 	trace_array[idx_trace] = NULL;
+
+
+	printf("\nAverage trun-around time: %f\n", (float)avg_turn_around_time/size);
+	printf("Average wait time: %f\n", (float)avg_wait_time/size);		
 }

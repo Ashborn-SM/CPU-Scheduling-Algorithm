@@ -15,6 +15,8 @@ typedef struct{
 	int arrival_t;       // Arrival time of the process
 	int state;           // State of the process before interrupt
 	int completion_time; // Completion time of the process
+	int turn_around_time;// Turn-around time of the process
+	int wait_time;       // Wait time of the process
 }PCB;
 
 /**

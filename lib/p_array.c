@@ -9,7 +9,7 @@ void memswap(void** a, void** b){
 }
 
 void sorted_insert(P_Array* process_array){
-	for(int i=process_array->size-1; i>=1; i--){
+	for(int i=process_array->size-1; i>=process_array->current_idx+1; i--){
 		if(process_array->key_compare(process_array->array_p[i], process_array->array_p[i-1]) == 0){
 			memswap(&process_array->array_p[i], &process_array->array_p[i-1]);
 		}
